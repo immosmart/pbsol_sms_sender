@@ -1,4 +1,4 @@
-pbsol_sms_sender
+Sms Sender (pbsol.ru)
 ================
 
 Wrapper for sms sending (http://pbsol.ru/)
