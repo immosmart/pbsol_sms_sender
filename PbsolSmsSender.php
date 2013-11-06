@@ -67,7 +67,7 @@ class PbsolSmsSender extends CApplicationComponent
      * @param string $message         Text of message
      * @param bool   $now             Send now (without Cron or Gearman). Default - false
      * @param bool   $tryNormalNumber Try normalize phone number. Default - true
-     * @param string $alphaNumber     Alpha number. If null - try to use alphaNumber from config
+     * @param string $alphaNumber     Alpha number. If null - uses alphaNumber from config
      *
      * @return bool
      * @throws PbsolSmsSenderException
