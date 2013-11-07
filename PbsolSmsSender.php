@@ -260,10 +260,10 @@ class PbsolSmsSender extends CApplicationComponent
         );
         $context = stream_context_create($opts);
         stream_context_set_option($context, 'ssl', 'local_cert', $this->certPath);
-        $result = @file_get_contents(trim($this->apiUrl, '/') . '/' . $method, 0, $context);
+        $result = file_get_contents(trim($this->apiUrl, '/') . '/' . $method, 0, $context);
         if (!$result) {
             throw new PbsolSmsSenderException(Yii::t(
-                'PbsolSmsSender', 'Error with get result with method {method}', array('{method}', $method)
+                'PbsolSmsSender', 'Error with get result with method {method}', array('{method}' => $method)
             ), self::PBSOL_ERROR_GET_RESULT);
         }
         return json_decode($result, true);
