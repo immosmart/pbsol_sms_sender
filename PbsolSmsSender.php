@@ -256,7 +256,7 @@ class PbsolSmsSender extends CApplicationComponent
             'http' => array(
                 'method' => "POST",
                 'content' => $request,
-                'header' => 'application/json',
+                'header' => 'Content-type: application/json',
             )
         );
         $context = stream_context_create($opts);
