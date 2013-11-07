@@ -1,0 +1,49 @@
+<?php
+
+class {YOUR_CLASS_NAME_HERE} extends CDbMigration
+{
+    public function up()
+    {
+        $this->createTable('pbsol_sms_log', array(
+                'id' => 'pk',
+                'guid' => 'string',
+                'from' => 'string',
+                'to' => 'string',
+                'text' => 'text',
+                'status' => 'string',
+                'is_wait' => 'boolean',
+                'created' => 'timestamp',
+                'delivered' => 'timestamp'
+            )
+        );
+    }
+
+    public function down()
+    {
+        $this->dropTable('pbsol_sms_log');
+    }
+
+
+    // Use safeUp/safeDown to do migration with transaction
+    /*public function safeUp()
+    {
+        $this->createTable('pbsol_sms_log', array(
+                'id' => 'pk',
+                'guid' => 'string',
+                'from' => 'string',
+                'to' => 'string',
+                'text' => 'text',
+                'status' => 'string',
+                'is_wait' => 'boolean',
+                'created' => 'timestamp',
+                'delivered' => 'timestamp'
+            )
+        );
+    }
+
+    public function safeDown()
+    {
+        $this->dropTable('pbsol_sms_log');
+    }*/
+
+}

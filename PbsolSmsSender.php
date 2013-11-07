@@ -267,7 +267,6 @@ class PbsolSmsSender extends CApplicationComponent
                 'PbsolSmsSender', 'Error with get result with method {method}', array('{method}' => $method)
             ), self::PBSOL_ERROR_GET_RESULT);
         }
-        var_dump(json_decode($result, true));
         return json_decode($result, true);
     }
 
