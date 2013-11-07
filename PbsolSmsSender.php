@@ -256,6 +256,7 @@ class PbsolSmsSender extends CApplicationComponent
             'http' => array(
                 'method' => "POST",
                 'content' => $request,
+                'header' => 'application/json',
             )
         );
         $context = stream_context_create($opts);
@@ -266,6 +267,7 @@ class PbsolSmsSender extends CApplicationComponent
                 'PbsolSmsSender', 'Error with get result with method {method}', array('{method}' => $method)
             ), self::PBSOL_ERROR_GET_RESULT);
         }
+        var_dump(json_decode($result, true));
         return json_decode($result, true);
     }
 
