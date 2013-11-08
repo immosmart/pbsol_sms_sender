@@ -15,7 +15,7 @@ class PbsolSmsCommand extends CConsoleCommand
      *
      * @param string $number          Phone number
      * @param string $message         Text of message
-     * @param bool   $now             Send now (without Cron or Gearman). Default - false
+     * @param bool   $now             Send now (without Cron or Callback). Default - false
      * @param bool   $tryNormalNumber Try normalize phone number. Default - true
      * @param string $alphaNumber     Alpha number. If null - uses alphaNumber from config
      */

@@ -95,7 +95,7 @@ class PbsolSmsSender extends CApplicationComponent
      *
      * @param string $phone           Phone number
      * @param string $message         Text of message
-     * @param bool   $now             Send now (without Cron or Gearman). Default - false
+     * @param bool   $now             Send now (without Cron or Callback). Default - false
      * @param bool   $tryNormalNumber Try normalize phone number. Default - true
      * @param string $alphaNumber     Alpha number. If null - uses alphaNumber from config
      *
@@ -160,9 +160,6 @@ class PbsolSmsSender extends CApplicationComponent
         switch ($this->delayMethod) {
         case 'cron':
             return $this->toCron($smsGwLog);
-            break;
-        case 'gearman':
-            return $this->toGearman($smsGwLog);
             break;
         case 'callbackArray':
             return call_user_func($this->delayCallback, $smsGwLog);
@@ -320,24 +317,6 @@ class PbsolSmsSender extends CApplicationComponent
             'PbsolSmsSender', '{date} - Waiting Cron job', array('{date}' => date('Y-m-d H:i:s'))
         );
         $smsGwLog->save();
-        return true;
-    }
-
-    /**
-     * Push to Gearman queue
-     *
-     * @param PbsolSmsLog $smsGwLog
-     *
-     * @return bool
-     */
-    private function toGearman(PbsolSmsLog $smsGwLog)
-    {
-        $smsGwLog->status = Yii::t(
-            'PbsolSmsSender', '{date} - Waiting Gearman job', array('{date}' => date('Y-m-d H:i:s'))
-        );
-        $smsGwLog->save();
-        $args = json_encode(array('id' => $smsGwLog->id));
-        GearmanModel::createClient("PbsolSmsPushById", $args);
         return true;
     }
 
