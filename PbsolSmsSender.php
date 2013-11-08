@@ -11,8 +11,9 @@ class PbsolSmsSender extends CApplicationComponent
     public $alphaNumber;
     public $apiUrl = 'https://sms.pbsol.ru:1543/api/';
     public $certPath;
-    public $defaultCountry = 'RU';
     public $delayMethod = 'cron';
+    public $delayCallback;
+    public $normalNumberCallback;
 
     //Possible errors
     const PBSOL_ERROR_NO_API_URL = 1;
@@ -23,6 +24,8 @@ class PbsolSmsSender extends CApplicationComponent
     const PBSOL_ERROR_EMPTY_PHONE = 6;
     const PBSOL_ERROR_EMPTY_MESSAGE = 7;
     const PBSOL_ERROR_EMPTY_ALPHA_NUMBER = 8;
+    const PBSOL_ERROR_DELAY_CALLBACK_NOT_FOUND = 9;
+    const PBSOL_ERROR_NORMAL_NUMBER_CALLBACK_NOT_FOUND = 10;
 
     /**
      * Initializing component
@@ -43,6 +46,7 @@ class PbsolSmsSender extends CApplicationComponent
             throw new PbsolSmsSenderException(Yii::t('PbsolSmsSender', 'Api url needed'), self::PBSOL_ERROR_NO_API_URL);
         }
 
+        // Check certificate
         if (!$this->certPath) {
             throw new PbsolSmsSenderException(Yii::t(
                 'PbsolSmsSender', 'Certificate needed'
@@ -51,11 +55,37 @@ class PbsolSmsSender extends CApplicationComponent
 
         if (!file_exists($this->certPath)) {
             $this->certPath = Yii::getPathOfAlias('application') . '/' . trim($this->certPath, '/');
-
             if (!file_exists($this->certPath)) {
                 throw new PbsolSmsSenderException(Yii::t(
                     'PbsolSmsSender', 'Certificate file "{file}" not found', array('{file}' => $this->certPath)
                 ), self::PBSOL_ERROR_CERTIFICATE_NOT_FOUND);
+            }
+        }
+
+        // Check delay methods
+        if ($this->delayMethod == 'callback') {
+            switch (gettype($this->delayCallback)) {
+            case 'array':
+                if (
+                    isset($this->delayCallback[0])
+                    && isset($this->delayCallback[1])
+                    && method_exists($this->delayCallback[0], $this->delayCallback[1])
+                ) {
+                    $this->delayMethod = 'callbackArray';
+                } else {
+                    throw new PbsolSmsSenderException(Yii::t(
+                        'PbsolSmsSender', 'Delay callback not found'
+                    ), self::PBSOL_ERROR_DELAY_CALLBACK_NOT_FOUND);
+                }
+                break;
+            case 'object':
+                $this->delayMethod = 'callbackObject';
+                break;
+            default:
+                throw new PbsolSmsSenderException(Yii::t(
+                    'PbsolSmsSender', 'Delay callback not found'
+                ), self::PBSOL_ERROR_DELAY_CALLBACK_NOT_FOUND);
+                break;
             }
         }
     }
@@ -134,6 +164,13 @@ class PbsolSmsSender extends CApplicationComponent
         case 'gearman':
             return $this->toGearman($smsGwLog);
             break;
+        case 'callbackArray':
+            return call_user_func($this->delayCallback, $smsGwLog);
+            break;
+        case 'callbackObject':
+            $method = $this->delayCallback;
+            return $method($smsGwLog);
+            break;
         default:
             return false;
             break;
@@ -141,36 +178,35 @@ class PbsolSmsSender extends CApplicationComponent
     }
 
     /**
-     * Normalizing phone number for country.
-     * If $country is null, uses defaultCountry from config.
+     * Normalizing phone number
      *
-     * @param string      $number
-     * @param null|string $country
+     * @param $number
      *
-     * @return null|string
+     * @return mixed
+     * @throws PbsolSmsSenderException
      */
-    public function numberNormal($number, $country = null)
+    public function numberNormal($number)
     {
-        if (!$country) {
-            $country = $this->defaultCountry;
-        }
-
         $number = preg_replace('/[^0-9]/x', '', trim($number));
 
-        if ($country == 'KZ' || $country == 'RU') {
-            // если номер пришел без кода страны
-            if (strlen($number) == 10) {
-                $number = '7' . $number;
+        switch (gettype($this->normalNumberCallback)) {
+        case 'array':
+            if (
+                isset($this->normalNumberCallback[0])
+                && isset($this->normalNumberCallback[1])
+                && method_exists($this->normalNumberCallback[0], $this->normalNumberCallback[1])
+            ) {
+                $number = call_user_func($this->normalNumberCallback, $number);
+            } else {
+                throw new PbsolSmsSenderException(Yii::t(
+                    'PbsolSmsSender', 'Normalize number callback not found'
+                ), self::PBSOL_ERROR_NORMAL_NUMBER_CALLBACK_NOT_FOUND);
             }
-            // если первый символ - не код страны 7, а, например, 8
-            if (strpos($number, '7') !== 0) {
-                $number = '7' . substr($number, 1);
-            }
-            // проверяем получившийся номер по регулярке
-            if (preg_match('/^[0-9]{11}$/', $number)) {
-                return $number;
-            }
-            return null;
+            break;
+        case 'object':
+            $method = $this->normalNumberCallback;
+            $number = $method($number);
+            break;
         }
 
         return $number;
