@@ -1,5 +1,12 @@
 <?php
 
+/**
+* Migration for PbsolSmsSender extension.
+* Do not copy this file into your migration dir!
+* You must create new migration with 'yiic migrate create' and then put this methods into created migration.
+* Then apply created migration: 'yiic migrate'
+*/
+
 class {YOUR_CLASS_NAME_HERE} extends CDbMigration
 {
     public function up()

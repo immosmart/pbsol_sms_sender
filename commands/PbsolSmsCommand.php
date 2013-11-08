@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class PbsolSmsCommand
+ *
+ * Command class for PbsolSmsSender extension.
+ * Make sure that 'pbsolsms' present in 'console.php' config file.
+ */
+
 class PbsolSmsCommand extends CConsoleCommand
 {
 
