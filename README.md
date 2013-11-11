@@ -31,7 +31,7 @@ Add lines:
 
 	'import' => array(
 	//any import
-		'application.extensions.pbsolSmsSender.models.*',
+		'application.extensions.PbsolSmsSender.models.*',
 	)
 
 5) Edit your commandMap config `config/console.php`.
@@ -41,7 +41,7 @@ Add new command:
 	'commandMap' => array(
 	//any commands
 		'pbsolsms' => array(
-			'class' => 'application.extensions.pbsolSmsSender.commands.pbsolSmsCommand',
+			'class' => 'application.extensions.PbsolSmsSender.commands.PbsolSmsCommand',
 		),
 	)
 
@@ -114,7 +114,7 @@ It is used for delayed sending or resending
 
 It is used for delayed sending or resending
 
-    $model = PbSolSmsLog::model->findByPk(57);
+    $model = PbsolSmsLog::model->findByPk(57);
     Yii::app()->smsSender->pushByModel($model);
 
 ## Normalize phone number
