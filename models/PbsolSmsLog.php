@@ -92,8 +92,8 @@ class PbsolSmsLog extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('guid',$this->guid,true);
-		$criteria->compare('from',$this->from,true);
-		$criteria->compare('to',$this->to,true);
+		$criteria->compare('t.from',$this->from,true);
+		$criteria->compare('t.to',$this->to,true);
 		$criteria->compare('text',$this->text,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('is_wait',$this->is_wait);
