@@ -230,6 +230,22 @@ class PbsolSmsSender extends CApplicationComponent
     }
 
     /**
+     * Return text description of sms state
+     *
+     * @param $guid string Message ID on Pbsol server
+     * @return null|string
+     */
+    public function getState($guid)
+    {
+        $result = $this->sendRequest('GetMessageState', array('MsgID' => $guid));
+
+        if (is_array($result) && isset($result['ResultDescription'])) {
+            return $result['ResultDescription'];
+        }
+        return null;
+    }
+
+    /**
      * Send sms by PbsolSmsLog-record
      *
      * @param PbsolSmsLog $smsGwLog

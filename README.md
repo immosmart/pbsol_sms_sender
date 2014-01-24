@@ -117,6 +117,16 @@ It is used for delayed sending or resending
     $model = PbsolSmsLog::model->findByPk(57);
     Yii::app()->smsSender->pushByModel($model);
 
+### Get state
+
+    /**
+     * Return text description of sms state
+     *
+     * @param $guid string Message ID on Pbsol server
+     * @return null|string
+     */
+    public function getState()
+
 ## Normalize phone number
 
 You can define the method (callback) that will normalize the number.
@@ -258,3 +268,12 @@ this is the same of
 and
 
     Yii::app()->smsSender->pushById(57);
+
+### Get state
+
+    /**
+     * Return text description of sms state
+     *
+     * @return mixed
+     */
+    public function getState()

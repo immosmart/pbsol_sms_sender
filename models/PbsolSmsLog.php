@@ -113,4 +113,14 @@ class PbsolSmsLog extends CActiveRecord
     {
         return Yii::app()->smsSender->pushByModel($this);
     }
+
+    /**
+     * Return text description of sms state
+     *
+     * @return mixed
+     */
+    public function getState()
+    {
+        return Yii::app()->smsSender->getState($this->guid);
+    }
 }
