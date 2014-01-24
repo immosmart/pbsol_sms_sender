@@ -117,7 +117,7 @@ class PbsolSmsLog extends CActiveRecord
     /**
      * Return text description of sms state
      *
-     * @return mixed
+     * @return string|null
      */
     public function getState()
     {

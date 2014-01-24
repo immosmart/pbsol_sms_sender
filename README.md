@@ -274,6 +274,6 @@ and
     /**
      * Return text description of sms state
      *
-     * @return mixed
+     * @return string|null
      */
     public function getState()
