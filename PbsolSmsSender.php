@@ -237,7 +237,7 @@ class PbsolSmsSender extends CApplicationComponent
      */
     public function getState($guid)
     {
-        $result = $this->sendRequest('GetMessageState', array('MsgID' => $guid), false);
+        $result = $this->sendRequest('GetMessageState', array('MsgID' => $guid));
 
         if (is_array($result) && isset($result['ResultDescription'])) {
             return $result['ResultDescription'];
@@ -294,12 +294,11 @@ class PbsolSmsSender extends CApplicationComponent
      *
      * @param string $method
      * @param array  $params
-     * @param boolean  $throw
      *
      * @return array|null
      * @throws PbsolSmsSenderException
      */
-    private function sendRequest($method, $params = array(), $throw = true)
+    private function sendRequest($method, $params = array())
     {
         $request = json_encode($params);
         $opts = array(
@@ -311,15 +310,11 @@ class PbsolSmsSender extends CApplicationComponent
         );
         $context = stream_context_create($opts);
         stream_context_set_option($context, 'ssl', 'local_cert', $this->certPath);
-        $result = file_get_contents(trim($this->apiUrl, '/') . '/' . $method, 0, $context);
+        $result = @file_get_contents(trim($this->apiUrl, '/') . '/' . $method, 0, $context);
         if (!$result) {
-            if ($throw) {
-                throw new PbsolSmsSenderException(Yii::t(
-                    'PbsolSmsSender', 'Error with get result with method {method}', array('{method}' => $method)
-                ), self::PBSOL_ERROR_GET_RESULT);
-            } else {
-                return array();
-            }
+            throw new PbsolSmsSenderException(Yii::t(
+                'PbsolSmsSender', 'Error with get result with method {method}', array('{method}' => $method)
+            ), self::PBSOL_ERROR_GET_RESULT);
         }
         return json_decode($result, true);
     }

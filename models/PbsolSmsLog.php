@@ -117,10 +117,14 @@ class PbsolSmsLog extends CActiveRecord
     /**
      * Return text description of sms state
      *
-     * @return string|null
+     * @return string
      */
     public function getState()
     {
-        return Yii::app()->smsSender->getState($this->guid);
+        try {
+            return Yii::app()->smsSender->getState($this->guid);
+        } catch (PbsolSmsSenderException $e) {
+            return '';
+        }
     }
 }
