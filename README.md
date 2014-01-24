@@ -117,7 +117,7 @@ It is used for delayed sending or resending
     $model = PbsolSmsLog::model->findByPk(57);
     Yii::app()->smsSender->pushByModel($model);
 
-### Get state
+### getState
 
     /**
      * Return text description of sms state
@@ -125,7 +125,7 @@ It is used for delayed sending or resending
      * @param $guid string Message ID on Pbsol server
      * @return null|string
      */
-    public function getState()
+    public function getState($guid)
 
 ## Normalize phone number
 
