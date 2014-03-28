@@ -39,7 +39,7 @@ class PbsolSmsCommand extends CConsoleCommand
         $stmt = $db->createCommand()->select('id')->from('pbsol_sms_log')->where('is_wait = :wait', array(':wait' => true))->query();
 
         while (($row = $stmt->read()) !== false) {
-            $db->createCommand()->update('pbsol_sms_log', array('is_wait' => false), 'id = :id', array(':id' => $row['id']));
+            $db->createCommand()->update('pbsol_sms_log', array('is_wait' => 'false'), 'id = :id', array(':id' => $row['id']));
             Yii::app()->smsSender->pushById($row['id']);
         }
     }
