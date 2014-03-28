@@ -24,6 +24,9 @@ class PbsolSmsCommand extends CConsoleCommand
         Yii::app()->smsSender->send($number, $message, (bool)$now, (bool)$tryNormalNumber, $alphaNumber);
     }
 
+    public function actionCheckState($guid) {
+        echo Yii::app()->smsSender->getState($guid);
+    }
     /**
      * This method can be added to Cron.
      * Sends all messages waiting to be send.
@@ -36,7 +39,7 @@ class PbsolSmsCommand extends CConsoleCommand
         $stmt = $db->createCommand()->select('id')->from('pbsol_sms_log')->where('is_wait = :wait', array(':wait' => true))->query();
 
         while (($row = $stmt->read()) !== false) {
-            $db->createCommand()->update('pbsol_sms_log', array('is_wait' => ':wait'), 'id = :id', array(':id' => $row['id'], ':wait' => false));
+            $db->createCommand()->update('pbsol_sms_log', array('is_wait' => false), 'id = :id', array(':id' => $row['id']));
             Yii::app()->smsSender->pushById($row['id']);
         }
     }
