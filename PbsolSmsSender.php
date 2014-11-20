@@ -269,20 +269,27 @@ class PbsolSmsSender extends CApplicationComponent
         // Send request and read response
         $result = $this->sendRequest('SendSms', $data);
 
-        // True response
-        if ($result['ResultCode'] == 0) {
+        if (is_array($result) && isset($result['ResultCode']) && $result['ResultCode'] == 0) {
             $smsGwLog->guid = $result['Result'];
             $smsGwLog->status = Yii::t('PbsolSmsSender', '{date} - OK send', array('{date}' => date('Y-m-d H:i:s')));
             $smsGwLog->save();
             return true;
         }
 
+        $errorMsg = '';
+
+        if (!is_array($result)) {
+            $errorMsg = $result;
+        } elseif (isset($result['ResultDescription'])) {
+            $errorMsg = $result['ResultDescription'];
+        }
+
         // False response
         $smsGwLog->status = Yii::t(
             'PbsolSmsSender', '{date} - Error send. Code: {code}. {description}', array(
                 '{date}' => date('Y-m-d H:i:s'),
-                '{code}' => $result['ResultCode'],
-                '{description}' => $result['ResultDescription']
+                '{code}' => isset($result['ResultCode']) ? $result['ResultCode'] : '',
+                '{description}' => $errorMsg
             )
         );
         $smsGwLog->save();
